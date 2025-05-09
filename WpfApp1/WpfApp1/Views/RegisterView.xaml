@@ -1,0 +1,35 @@
+﻿<Window x:Class="EasyFoodManager.Views.RegisterView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:EasyFoodManager.ViewModels"
+        Title="Înregistrare" Height="450" Width="400">
+
+    <Window.DataContext>
+        <vm:RegisterViewModel />
+    </Window.DataContext>
+
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <TextBlock Text="Nume" />
+            <TextBox Text="{Binding Nume}" />
+            <TextBlock Text="Prenume" />
+            <TextBox Text="{Binding Prenume}" />
+            <TextBlock Text="Email" />
+            <TextBox Text="{Binding Email}" />
+            <TextBlock Text="Parolă" />
+            <PasswordBox Name="passwordBox" PasswordChanged="PasswordBox_PasswordChanged" />
+            <TextBlock Text="Telefon" />
+            <TextBox Text="{Binding Telefon}" />
+            <TextBlock Text="Adresă" />
+            <TextBox Text="{Binding Adresa}" />
+
+            <TextBlock Text="Tip utilizator" />
+            <ComboBox SelectedValue="{Binding TipUtilizator}" SelectedValuePath="Content">
+                <ComboBoxItem Content="client" />
+                <ComboBoxItem Content="angajat" />
+            </ComboBox>
+
+            <Button Content="Creează cont" Command="{Binding RegisterCommand}" Margin="0 10 0 0" />
+        </StackPanel>
+    </ScrollViewer>
+</Window>
