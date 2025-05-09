@@ -14,9 +14,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Facultate\\Anu 2\\MAP\\EasyFoodManager\\WpfApp1\\WpfApp1\\WpfApp1.csproj",
-      "projectName": "WpfApp1",
-      "projectPath": "D:\\Facultate\\Anu 2\\MAP\\EasyFoodManager\\WpfApp1\\WpfApp1\\WpfApp1.csproj",
+      "projectUniqueName": "D:\\Facultate\\Anu 2\\MAP\\EasyFoodManager\\WpfApp1\\WpfApp1\\EasyFoodManager.csproj",
+      "projectName": "EasyFoodManager",
+      "projectPath": "D:\\Facultate\\Anu 2\\MAP\\EasyFoodManager\\WpfApp1\\WpfApp1\\EasyFoodManager.csproj",
       "packagesPath": "C:\\Users\\alexa\\.nuget\\packages\\",
       "outputPath": "D:\\Facultate\\Anu 2\\MAP\\EasyFoodManager\\WpfApp1\\WpfApp1\\obj\\",
       "projectStyle": "PackageReference",

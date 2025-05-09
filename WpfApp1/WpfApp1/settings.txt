@@ -1,0 +1,6 @@
+discountMeniu=10
+pragReducere=100
+procentReducere=15
+pragTransport=50
+costTransport=10
+pragStocCritic=500
