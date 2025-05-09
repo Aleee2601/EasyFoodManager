@@ -1,0 +1,20 @@
+﻿<Window x:Class="EasyFoodManager.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:EasyFoodManager.ViewModels"
+        Title="Autentificare" Height="250" Width="400">
+
+    <Window.DataContext>
+        <vm:LoginViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="20">
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="Email" />
+            <TextBox Height="30" Text="{Binding Email}" />
+            <TextBlock Text="Parola" />
+            <PasswordBox Height="30" Name="passwordBox" PasswordChanged="PasswordBox_PasswordChanged" />
+            <Button Margin="0 10" Height="35" Content="Login" Command="{Binding LoginCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>

@@ -9,12 +9,12 @@ namespace EasyFoodManager.Models
     public class User
     {
         public int Id { get; set; }
-        public string Nume { get; set; }
-        public string Prenume { get; set; }
-        public string Email { get; set; }
-        public string Parola { get; set; }
-        public string Telefon { get; set; }
-        public string Adresa { get; set; }
-        public string TipUtilizator { get; set; } // "client" sau "angajat"
+        public string Nume { get; set; } = string.Empty;
+        public string Prenume { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Parola { get; set; } = string.Empty;
+        public string Telefon { get; set; } = string.Empty;
+        public string Adresa { get; set; } = string.Empty;
+        public string TipUtilizator { get; set; } = string.Empty;
     }
 }
