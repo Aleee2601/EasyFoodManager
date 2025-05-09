@@ -1,0 +1,15 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.cache
+*.db
+*.log
+
+# Build results
+bin/
+obj/
+
+# Nu include fișiere generate automat
+*.g.i.cs
+*.AssemblyInfo.cs
