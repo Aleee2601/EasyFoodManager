@@ -1,0 +1,68 @@
+﻿<Window x:Class="EasyFoodManager.Views.PreparatView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:EasyFoodManager.Views"
+        Title="Preparate - Administrare" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Lista preparate -->
+        <GroupBox Header="Preparate" Grid.Column="0" Margin="0,0,10,0">
+            <ListView ItemsSource="{Binding Preparate}" SelectedItem="{Binding SelectedPreparat}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Denumire}" Width="200"/>
+                        <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Pret}" Width="80"/>
+                        <GridViewColumn Header="Portie" DisplayMemberBinding="{Binding CantitatePortie}" Width="100"/>
+                        <GridViewColumn Header="Total" DisplayMemberBinding="{Binding CantitateTotala}" Width="100"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+
+        <!-- Detalii și alergeni -->
+        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Top">
+            <TextBlock Text="Denumire:" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding SelectedPreparat.Denumire, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+
+            <TextBlock Text="Preț:" Margin="0,10,0,5"/>
+            <TextBox Text="{Binding SelectedPreparat.Pret, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+
+            <TextBlock Text="Cantitate/portie:" Margin="0,10,0,5"/>
+            <TextBox Text="{Binding SelectedPreparat.CantitatePortie, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+
+            <TextBlock Text="Cantitate totală:" Margin="0,10,0,5"/>
+            <TextBox Text="{Binding SelectedPreparat.CantitateTotala, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+
+            <TextBlock Text="Categorie ID:" Margin="0,10,0,5"/>
+            <TextBox Text="{Binding SelectedPreparat.CategorieId, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+
+            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                <Button Content="Adaugă" Command="{Binding AddCommand}" Width="60" Margin="0,0,5,0"/>
+                <Button Content="Editează" Command="{Binding UpdateCommand}" Width="60" Margin="0,0,5,0"/>
+                <Button Content="Șterge" Command="{Binding DeleteCommand}" Width="60"/>
+            </StackPanel>
+
+            <!-- Alergeni -->
+            <TextBlock Text="Alergeni:" Margin="0,20,0,5"/>
+            <ListBox ItemsSource="{Binding TotiAlergenii}" Height="120" Width="200">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <CheckBox Content="{Binding Nume}"
+                      Tag="{Binding}"  
+                            IsChecked="{Binding RelativeSource={RelativeSource AncestorType=Window},
+                                          Path=DataContext.AlergeniSelectati,
+                                          Converter={StaticResource AlergenSelectedConverter},
+                                          ConverterParameter={Binding Tag, RelativeSource={RelativeSource Self}}}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,80 @@
+﻿<Window x:Class="EasyFoodManager.Views.AngajatDashboardView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:EasyFoodManager.Views"
+        Title="Angajat - Comenzi și stoc" Height="650" Width="1000"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2.5*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="1.5*" />
+        </Grid.RowDefinitions>
+
+        <!-- Comenzi active -->
+        <GroupBox Header="Comenzi active" Grid.Row="0" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ListView ItemsSource="{Binding ComenziActive}" SelectedItem="{Binding SelectedComanda}" Grid.Row="0">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Cod" DisplayMemberBinding="{Binding Cod}" Width="100"/>
+                            <GridViewColumn Header="Data" DisplayMemberBinding="{Binding Data}" Width="150"/>
+                            <GridViewColumn Header="Stare" DisplayMemberBinding="{Binding Stare}" Width="120"/>
+                            <GridViewColumn Header="Total" DisplayMemberBinding="{Binding CostTotal}" Width="80"/>
+                            <GridViewColumn Header="Client ID" DisplayMemberBinding="{Binding ClientId}" Width="80"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                    <ComboBox Width="200" Margin="0,0,10,0" SelectedItem="{Binding StareNoua}">
+                        <ComboBox.ItemsSource>
+                            <x:Array Type="{x:Type sys:String}" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <sys:String>Înregistrată</sys:String>
+                                <sys:String>Se pregătește</sys:String>
+                                <sys:String>A plecat la client</sys:String>
+                                <sys:String>Livrată</sys:String>
+                                <sys:String>Anulată</sys:String>
+                            </x:Array>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+
+                    <Button Content="Schimbă stare" Command="{Binding SchimbaStareCommand}" Padding="10,5"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <!-- Toate comenzile -->
+        <GroupBox Header="Toate comenzile" Grid.Row="1" Margin="0,0,0,10">
+            <ListView ItemsSource="{Binding ToateComenzile}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Cod" DisplayMemberBinding="{Binding Cod}" Width="100"/>
+                        <GridViewColumn Header="Data" DisplayMemberBinding="{Binding Data}" Width="150"/>
+                        <GridViewColumn Header="Stare" DisplayMemberBinding="{Binding Stare}" Width="120"/>
+                        <GridViewColumn Header="Total" DisplayMemberBinding="{Binding CostTotal}" Width="80"/>
+                        <GridViewColumn Header="Client ID" DisplayMemberBinding="{Binding ClientId}" Width="80"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+
+        <!-- Preparate cu stoc scăzut -->
+        <GroupBox Header="Stoc scăzut" Grid.Row="2">
+            <ListView ItemsSource="{Binding PreparateCuStocScazut}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Preparat" DisplayMemberBinding="{Binding Denumire}" Width="200"/>
+                        <GridViewColumn Header="Cantitate totală" DisplayMemberBinding="{Binding CantitateTotala}" Width="150"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+    </Grid>
+</Window>

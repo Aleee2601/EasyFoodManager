@@ -1,0 +1,74 @@
+﻿<Window x:Class="EasyFoodManager.Views.ClientDashboardView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:EasyFoodManager.Views"
+        Title="Client - Comenzi" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Lista preparate (meniul restaurantului) -->
+        <GroupBox Header="Meniu restaurant" Grid.Row="0" Margin="0,0,0,10">
+            <ListView ItemsSource="{Binding MeniuPreparate}" Name="PreparatList" SelectionMode="Single">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Preparat.Denumire}" Width="200"/>
+                        <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Preparat.Pret}" Width="100"/>
+                        <GridViewColumn Header="Cantitate" Width="100">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox Text="{Binding Cantitate, UpdateSourceTrigger=PropertyChanged}" Width="60" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+
+        <!-- Buton plasează comanda -->
+        <Button Content="Plasează comanda"
+                Command="{Binding PlaseazaComandaCommand}"
+                HorizontalAlignment="Center"
+                Padding="10,5"
+                Margin="0,0,0,10"
+                Grid.Row="1" />
+
+        <!-- Lista comenzi client -->
+        <GroupBox Header="Comenzile mele" Grid.Row="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ListView ItemsSource="{Binding ComenziClient}" SelectedItem="{Binding ComandaSelectata}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Cod" DisplayMemberBinding="{Binding Cod}" Width="100"/>
+                            <GridViewColumn Header="Dată" DisplayMemberBinding="{Binding Data}" Width="150"/>
+                            <GridViewColumn Header="Stare" DisplayMemberBinding="{Binding Stare}" Width="120"/>
+                            <GridViewColumn Header="Total" DisplayMemberBinding="{Binding CostTotal}" Width="80"/>
+                            <GridViewColumn Header="Livrare" DisplayMemberBinding="{Binding CostLivrare}" Width="80"/>
+                            <GridViewColumn Header="Discount" DisplayMemberBinding="{Binding Discount}" Width="80"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+
+                <!-- Buton anulează comanda -->
+                <Button Content="Anulează comanda"
+                        Command="{Binding AnuleazaComandaCommand}"
+                        IsEnabled="{Binding ComandaSelectata}"
+                        Margin="0,10,0,0"
+                        Padding="10,5"
+                        Grid.Row="1"
+                        HorizontalAlignment="Right" />
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>

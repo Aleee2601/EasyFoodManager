@@ -1,75 +1,82 @@
-﻿using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Input;
+﻿using EasyFoodManager.Models;
 using EasyFoodManager.DAL;
+using EasyFoodManager.Helpers;
+using System;
+using System.ComponentModel;
+using System.Windows.Input;
 using EasyFoodManager.Services;
 
 namespace EasyFoodManager.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
     {
-        private string _email = string.Empty;
-        private string _parola = string.Empty;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
-
+        private string _email;
         public string Email
         {
             get => _email;
-            set { _email = value; OnPropertyChanged(); }
+            set
+            {
+                _email = value;
+                OnPropertyChanged(nameof(Email));
+            }
         }
 
+        private string _parola;
         public string Parola
         {
             get => _parola;
-            set { _parola = value; OnPropertyChanged(); }
+            set
+            {
+                _parola = value;
+                OnPropertyChanged(nameof(Parola));
+            }
+        }
+
+        private string _mesajEroare;
+        public string MesajEroare
+        {
+            get => _mesajEroare;
+            set
+            {
+                _mesajEroare = value;
+                OnPropertyChanged(nameof(MesajEroare));
+            }
         }
 
         public ICommand LoginCommand { get; }
 
+        // Eveniment (delegate) folosit pentru navigare în UI
+        public Action<Utilizator> OnLoginSuccess;
+
         public LoginViewModel()
         {
-            LoginCommand = new RelayCommand(Login);
+            LoginCommand = new RelayCommand(_ => Login());
         }
 
         private void Login()
         {
-            var db = new DbHelper();
-            string hashedPassword = HashHelper.ComputeSha256Hash(Parola);
+            MesajEroare = string.Empty;
 
-            using (SqlConnection con = db.GetConnection())
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Parola))
             {
-                SqlCommand cmd = new SqlCommand("LoginUser", con)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                cmd.Parameters.AddWithValue("@Email", Email);
-                cmd.Parameters.AddWithValue("@Parola", hashedPassword);
-
-                con.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    string tip = reader["TipUtilizator"].ToString() ?? "";
-                    string nume = reader["Nume"].ToString() ?? "";
-
-                    MessageBox.Show($"Bine ai venit, {nume} ({tip})!");
-                    // Navigare in functie de tip (client / angajat)
-                }
-                else
-                {
-                    MessageBox.Show("Email sau parolă incorectă.");
-                }
+                MesajEroare = "Email și parolă sunt obligatorii.";
+                return;
             }
+
+            Utilizator user = UtilizatorDAL.Login(Email, Parola);
+
+            if (user == null)
+            {
+                MesajEroare = "Autentificare eșuată.";
+                return;
+            }
+
+            // Navigare în funcție de rol
+            OnLoginSuccess?.Invoke(user);
         }
 
-        protected void OnPropertyChanged([CallerMemberName] string name = null!)
-        {
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-        }
     }
 }

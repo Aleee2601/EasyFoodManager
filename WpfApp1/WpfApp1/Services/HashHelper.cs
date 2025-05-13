@@ -12,7 +12,7 @@ namespace EasyFoodManager.Services
                 byte[] bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(rawData));
                 StringBuilder builder = new StringBuilder();
                 foreach (byte b in bytes)
-                    builder.Append(b.ToString("x2"));
+                    builder.Append(b.ToString("x2")); // hex format
                 return builder.ToString();
             }
         }
