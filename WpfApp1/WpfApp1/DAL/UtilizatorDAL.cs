@@ -36,21 +36,21 @@ namespace EasyFoodManager.DAL
             return null;
         }
 
-        public static void Register(Utilizator u)
-        {
-            var parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@Nume", u.Nume),
-                new SqlParameter("@Prenume", u.Prenume),
-                new SqlParameter("@Email", u.Email),
-                new SqlParameter("@Telefon", u.Telefon),
-                new SqlParameter("@Adresa", u.Adresa),
-                new SqlParameter("@Parola", u.Parola),
-                new SqlParameter("@Tip", u.Tip) // ex: "Client" sau "Angajat"
-            };
+        //public static void Register(Utilizator u)
+        //{
+        //    var parameters = new List<SqlParameter>
+        //    {
+        //        new SqlParameter("@Nume", u.Nume),
+        //        new SqlParameter("@Prenume", u.Prenume),
+        //        new SqlParameter("@Email", u.Email),
+        //        new SqlParameter("@Telefon", u.Telefon),
+        //        new SqlParameter("@Adresa", u.Adresa),
+        //        new SqlParameter("@Parola", u.Parola),
+        //        new SqlParameter("@Tip", u.Tip) // ex: "Client" sau "Angajat"
+        //    };
 
-            DatabaseHelper.ExecuteNonQuery("RegisterUtilizator", parameters);
-        }
+        //    DatabaseHelper.ExecuteNonQuery("RegisterUtilizator", parameters);
+        //}
 
         public static Utilizator GetUtilizatorByEmail(string email)
         {
@@ -78,5 +78,26 @@ namespace EasyFoodManager.DAL
 
             return null;
         }
+        public static bool Register(Utilizator u)
+        {
+            if (GetUtilizatorByEmail(u.Email) != null)
+                return false;
+
+            using (var con = DatabaseHelper.GetConnection())
+            using (var cmd = new SqlCommand("RegisterUtilizator", con))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Nume", u.Nume);
+                cmd.Parameters.AddWithValue("@Prenume", u.Prenume);
+                cmd.Parameters.AddWithValue("@Email", u.Email);
+                cmd.Parameters.AddWithValue("@Parola", u.Parola);
+                cmd.Parameters.AddWithValue("@Telefon", u.Telefon ?? "");
+                cmd.Parameters.AddWithValue("@Adresa", u.Adresa ?? "");
+                cmd.Parameters.AddWithValue("@Tip", u.Tip);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+
     }
 }

@@ -1,0 +1,19 @@
+﻿<Window x:Class="EasyFoodManager.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="EasyFoodManager - Start" Height="350" Width="400"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Background="#f3f3f3">
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="250">
+
+            <TextBlock Text="Bine ai venit la EasyFoodManager"
+                       FontSize="15.7" FontWeight="Bold" TextAlignment="Left" Margin="0,0,0,20" Width="277"/>
+
+            <Button Content="Autentificare" Height="40" Margin="0,0,0,10" Click="Login_Click"/>
+            <Button Content="Înregistrare" Height="40" Margin="0,0,0,10" Click="Register_Click"/>
+            <Button Content="Continuă ca vizitator" Height="40" Click="Guest_Click"/>
+
+        </StackPanel>
+    </Grid>
+</Window>

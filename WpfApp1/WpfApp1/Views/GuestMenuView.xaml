@@ -1,0 +1,37 @@
+﻿<Window x:Class="EasyFoodManager.Views.GuestMenuView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Meniu - Vizitator" Height="500" Width="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Header="Meniuri disponibile" Grid.Column="0" Margin="0,0,10,0">
+            <ListView ItemsSource="{Binding Meniuri}" SelectedItem="{Binding SelectedMeniu}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Denumire}" Width="150"/>
+                        <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Pret}" Width="80"/>
+                        <GridViewColumn Header="Categorie ID" DisplayMemberBinding="{Binding CategorieId}" Width="100"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+
+        <GroupBox Header="Preparate în meniu" Grid.Column="1">
+            <ListView ItemsSource="{Binding PreparateleMeniului}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Denumire}" Width="200"/>
+                        <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Pret}" Width="80"/>
+                        <GridViewColumn Header="Porție (g/ml)" DisplayMemberBinding="{Binding CantitatePortie}" Width="100"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </GroupBox>
+    </Grid>
+</Window>
