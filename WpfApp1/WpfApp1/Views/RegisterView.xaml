@@ -32,6 +32,14 @@
 
             <TextBlock Text="Adresă:"/>
             <TextBox Text="{Binding Adresa}" Margin="0,0,0,10"/>
+            
+            <TextBlock Text="Tip utilizator:" Margin="0,10,0,5"/>
+            <ComboBox SelectedValue="{Binding Tip}" SelectedValuePath="Content">
+                <ComboBoxItem Content="Client" />
+                <ComboBoxItem Content="Angajat" />
+            </ComboBox>
+
+
 
             <Button Content="Înregistrare" Command="{Binding RegisterCommand}" Height="35" Margin="0,10,0,0"/>
             <TextBlock Text="{Binding MesajEroare}" Foreground="Red" TextWrapping="Wrap"/>

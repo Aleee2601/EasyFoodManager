@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EasyFoodManager.DAL
 {
@@ -10,34 +10,43 @@ namespace EasyFoodManager.DAL
     {
         public static void AddComanda(Comanda comanda)
         {
-            var parameters = new List<SqlParameter>
+            var comandaIdParam = new SqlParameter("@ComandaId", SqlDbType.Int)
+            {
+                Direction = ParameterDirection.Output
+            };
+
+            var parametri = new List<SqlParameter>
             {
                 new SqlParameter("@ClientId", comanda.ClientId),
                 new SqlParameter("@Data", comanda.Data),
+                new SqlParameter("@Cod", comanda.Cod),
                 new SqlParameter("@Stare", comanda.Stare),
                 new SqlParameter("@CostTotal", comanda.CostTotal),
                 new SqlParameter("@CostLivrare", comanda.CostLivrare),
                 new SqlParameter("@Discount", comanda.Discount),
-                new SqlParameter("@OraEstimataLivrare", comanda.OraEstimataLivrare)
+                new SqlParameter("@OraEstimataLivrare", comanda.OraEstimataLivrare),
+                comandaIdParam // OUTPUT
             };
 
-            // Returneaza Id-ul comenzii pentru inserarea produselor
-            object result = DatabaseHelper.ExecuteScalar("AddComanda", parameters);
-            int comandaId = Convert.ToInt32(result);
+            DatabaseHelper.ExecuteNonQuery("AddComanda", parametri);
 
-            // Adauga produsele in comanda
-            foreach (var item in comanda.Produse)
+            // salvam ID-ul generat inapoi in obiectul comanda
+            comanda.Id = (int)comandaIdParam.Value;
+
+            // daca vrei, aici inserezi si in ComandaPreparat:
+            foreach (var p in comanda.Produse)
             {
-                var paramProdus = new List<SqlParameter>
-                {
-                    new SqlParameter("@ComandaId", comandaId),
-                    new SqlParameter("@PreparatId", item.PreparatId),
-                    new SqlParameter("@NrBucati", item.NrBucati)
-                };
+                var paramPrep = new List<SqlParameter>
+        {
+            new SqlParameter("@ComandaId", comanda.Id),
+            new SqlParameter("@PreparatId", p.PreparatId),
+            new SqlParameter("@NrBucati", p.NrBucati)
+        };
 
-                DatabaseHelper.ExecuteNonQuery("AddPreparatLaComanda", paramProdus);
+                DatabaseHelper.ExecuteNonQuery("AddComandaPreparat", paramPrep);
             }
         }
+
 
         public static List<Comanda> GetComenziByClientId(int clientId)
         {
@@ -70,14 +79,15 @@ namespace EasyFoodManager.DAL
 
         public static void UpdateStareComanda(int comandaId, string stareNoua)
         {
-            var parameters = new List<SqlParameter>
-            {
-                new SqlParameter("@ComandaId", comandaId),
-                new SqlParameter("@Stare", stareNoua)
-            };
+            var parametri = new List<SqlParameter>
+        {
+            new SqlParameter("@ComandaId", comandaId),
+            new SqlParameter("@Stare", stareNoua)
+        };
 
-            DatabaseHelper.ExecuteNonQuery("UpdateStareComanda", parameters);
+            DatabaseHelper.ExecuteNonQuery("UpdateStareComanda", parametri);
         }
+
 
         public static List<Comanda> GetComenziActive()
         {
@@ -96,8 +106,10 @@ namespace EasyFoodManager.DAL
                         CostTotal = Convert.ToDecimal(reader["CostTotal"]),
                         CostLivrare = Convert.ToDecimal(reader["CostLivrare"]),
                         Discount = Convert.ToDecimal(reader["Discount"]),
-                        OraEstimataLivrare = reader["OraEstimataLivrare"].ToString()
+                        OraEstimataLivrare = reader["OraEstimataLivrare"].ToString(),
+                        ClientId = (int)reader["ClientId"] // ⬅️ Asigură-te că ai AICI
                     });
+
                 }
             }
 
@@ -121,8 +133,10 @@ namespace EasyFoodManager.DAL
                         CostTotal = Convert.ToDecimal(reader["CostTotal"]),
                         CostLivrare = Convert.ToDecimal(reader["CostLivrare"]),
                         Discount = Convert.ToDecimal(reader["Discount"]),
-                        OraEstimataLivrare = reader["OraEstimataLivrare"].ToString()
+                        OraEstimataLivrare = reader["OraEstimataLivrare"].ToString(),
+                        ClientId = (int)reader["ClientId"] // ⬅️ Asigură-te că ai AICI
                     });
+
                 }
             }
 
@@ -138,5 +152,28 @@ namespace EasyFoodManager.DAL
 
             DatabaseHelper.ExecuteNonQuery("AnuleazaComanda", parameters);
         }
+        public static List<ComandaPreparat> GetProduseDinComanda(int comandaId)
+        {
+            var lista = new List<ComandaPreparat>();
+            var parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@ComandaId", comandaId)
+    };
+
+            using (var reader = DatabaseHelper.ExecuteReader("GetProduseDinComanda", parameters))
+            {
+                while (reader.Read())
+                {
+                    lista.Add(new ComandaPreparat
+                    {
+                        PreparatId = (int)reader["PreparatId"],
+                        NrBucati = (int)reader["NrBucati"]
+                    });
+                }
+            }
+
+            return lista;
+        }
+
     }
 }

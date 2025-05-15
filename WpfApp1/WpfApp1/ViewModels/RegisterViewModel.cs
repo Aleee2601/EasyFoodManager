@@ -15,6 +15,7 @@ namespace EasyFoodManager.ViewModels
         public string Parola { get; set; }
         public string Telefon { get; set; }
         public string Adresa { get; set; }
+        public string Tip { get; set; }
 
         private string _mesajEroare;
         public string MesajEroare
@@ -45,6 +46,13 @@ namespace EasyFoodManager.ViewModels
                 return;
             }
 
+            // ✅ Verificare explicită înainte de apel
+            if (UtilizatorDAL.EmailExista(Email))
+            {
+                MesajEroare = "Acest email există deja.";
+                return;
+            }
+
             var utilizator = new Utilizator
             {
                 Nume = Nume,
@@ -53,14 +61,15 @@ namespace EasyFoodManager.ViewModels
                 Parola = HashHelper.ComputeSha256Hash(Parola),
                 Telefon = Telefon,
                 Adresa = Adresa,
-                Tip = "Client"
+                Tip = this.Tip
             };
 
             bool succes = UtilizatorDAL.Register(utilizator);
             if (succes)
                 OnRegisterSuccess?.Invoke();
             else
-                MesajEroare = "Acest email există deja.";
+                MesajEroare = "A apărut o eroare la înregistrare.";
+        
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

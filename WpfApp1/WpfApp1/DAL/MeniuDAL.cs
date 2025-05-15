@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Windows.Controls;
 
 namespace EasyFoodManager.DAL
@@ -22,7 +22,7 @@ namespace EasyFoodManager.DAL
                         Id = (int)reader["Id"],
                         Denumire = reader["Denumire"].ToString(),
                         CategorieId = (int)reader["CategorieId"],
-                        Descriere = reader["Descriere"].ToString(),
+                        //Descriere = reader["Descriere"].ToString(),
                         Pret = Convert.ToDecimal(reader["Pret"])
                     });
                 }

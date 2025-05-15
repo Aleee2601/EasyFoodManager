@@ -12,6 +12,28 @@ namespace EasyFoodManager.ViewModels
 {
     public class AngajatComenziViewModel : INotifyPropertyChanged
     {
+        private string _clientNume;
+        public string ClientNume
+        {
+            get => _clientNume;
+            set { _clientNume = value; OnPropertyChanged(nameof(ClientNume)); }
+        }
+
+        private string _clientTelefon;
+        public string ClientTelefon
+        {
+            get => _clientTelefon;
+            set { _clientTelefon = value; OnPropertyChanged(nameof(ClientTelefon)); }
+        }
+
+        private string _clientAdresa;
+        public string ClientAdresa
+        {
+            get => _clientAdresa;
+            set { _clientAdresa = value; OnPropertyChanged(nameof(ClientAdresa)); }
+        }
+
+        public ObservableCollection<ComandaPreparat> Produse { get; set; } = new();
         public ObservableCollection<Comanda> ComenziActive { get; set; } = new();
         public ObservableCollection<Comanda> ToateComenzile { get; set; } = new();
         public ObservableCollection<Preparat> PreparateCuStocScazut { get; set; } = new();
@@ -24,8 +46,35 @@ namespace EasyFoodManager.ViewModels
             {
                 _selectedComanda = value;
                 OnPropertyChanged(nameof(SelectedComanda));
+
+                if (value != null)
+                {
+                    var client = UtilizatorDAL.GetUtilizatorById(value.ClientId);
+                    if (client != null)
+                    {
+                        ClientNume = $"{client.Nume} {client.Prenume}";
+                        ClientTelefon = client.Telefon;
+                        ClientAdresa = client.Adresa;
+                        OnPropertyChanged(nameof(ClientNume));
+                        OnPropertyChanged(nameof(ClientTelefon));
+                        OnPropertyChanged(nameof(ClientAdresa));
+                    }
+
+                    Produse.Clear();
+                    foreach (var p in ComandaDAL.GetProduseDinComanda(value.Id))
+                        Produse.Add(p);
+
+                    OnPropertyChanged(nameof(Produse));
+                }
+                Console.WriteLine("Comanda selectată: " + value?.Id);
+                Console.WriteLine("Client: " + ClientNume);
+
             }
+
         }
+
+
+
 
         private string _stareNoua;
         public string StareNoua
@@ -53,7 +102,11 @@ namespace EasyFoodManager.ViewModels
         {
             ComenziActive.Clear();
             foreach (var c in ComandaDAL.GetComenziActive())
+            {
+                Console.WriteLine($"Comanda {c.Id} - ClientId: {c.ClientId}");
                 ComenziActive.Add(c);
+            }
+
 
             ToateComenzile.Clear();
             foreach (var c in ComandaDAL.GetComenziToate())

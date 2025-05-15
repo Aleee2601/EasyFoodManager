@@ -2,12 +2,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EasyFoodManager.DAL
 {
     public static class PreparatDAL
     {
+
         public static List<Preparat> GetAllPreparate()
         {
             var preparate = new List<Preparat>();
@@ -117,6 +118,7 @@ namespace EasyFoodManager.DAL
             return alergeni;
         }
 
+
         public static void AddAlergenLaPreparat(int preparatId, int alergenId)
         {
             var parameters = new List<SqlParameter>
@@ -138,5 +140,35 @@ namespace EasyFoodManager.DAL
 
             DatabaseHelper.ExecuteNonQuery("RemoveAlergenDeLaPreparat", parameters);
         }
+
+        public static List<PreparatMeniuDTO> CautaPreparateMeniu(string keyword, string alergen, bool contine)
+        {
+            var lista = new List<PreparatMeniuDTO>();
+            var parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@Keyword", keyword),
+        new SqlParameter("@Alergen", string.IsNullOrEmpty(alergen) ? (object)DBNull.Value : alergen),
+        new SqlParameter("@Contine", contine)
+    };
+
+            using (var reader = DatabaseHelper.ExecuteReader("SearchPreparateMeniu", parameters))
+            {
+                while (reader.Read())
+                {
+                    lista.Add(new PreparatMeniuDTO
+                    {
+                        Tip = reader["Tip"].ToString(),
+                        Id = (int)reader["Id"],
+                        Denumire = reader["Denumire"].ToString(),
+                        Pret = Convert.ToDecimal(reader["Pret"]),
+                        Cantitate = reader["CantitatePortie"] == DBNull.Value ? null : reader["CantitatePortie"].ToString(),
+                        Categorie = reader["Categorie"].ToString()
+                    });
+                }
+            }
+            return lista;
+        }
+
+
     }
 }

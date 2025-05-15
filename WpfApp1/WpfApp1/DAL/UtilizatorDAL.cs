@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace EasyFoodManager.DAL
 {
@@ -36,22 +36,6 @@ namespace EasyFoodManager.DAL
             return null;
         }
 
-        //public static void Register(Utilizator u)
-        //{
-        //    var parameters = new List<SqlParameter>
-        //    {
-        //        new SqlParameter("@Nume", u.Nume),
-        //        new SqlParameter("@Prenume", u.Prenume),
-        //        new SqlParameter("@Email", u.Email),
-        //        new SqlParameter("@Telefon", u.Telefon),
-        //        new SqlParameter("@Adresa", u.Adresa),
-        //        new SqlParameter("@Parola", u.Parola),
-        //        new SqlParameter("@Tip", u.Tip) // ex: "Client" sau "Angajat"
-        //    };
-
-        //    DatabaseHelper.ExecuteNonQuery("RegisterUtilizator", parameters);
-        //}
-
         public static Utilizator GetUtilizatorByEmail(string email)
         {
             var parameters = new List<SqlParameter>
@@ -78,26 +62,76 @@ namespace EasyFoodManager.DAL
 
             return null;
         }
-        public static bool Register(Utilizator u)
+        public static bool EmailExista(string email)
         {
-            if (GetUtilizatorByEmail(u.Email) != null)
-                return false;
-
-            using (var con = DatabaseHelper.GetConnection())
-            using (var cmd = new SqlCommand("RegisterUtilizator", con))
+            var parameters = new List<SqlParameter>
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Nume", u.Nume);
-                cmd.Parameters.AddWithValue("@Prenume", u.Prenume);
-                cmd.Parameters.AddWithValue("@Email", u.Email);
-                cmd.Parameters.AddWithValue("@Parola", u.Parola);
-                cmd.Parameters.AddWithValue("@Telefon", u.Telefon ?? "");
-                cmd.Parameters.AddWithValue("@Adresa", u.Adresa ?? "");
-                cmd.Parameters.AddWithValue("@Tip", u.Tip);
+                new SqlParameter("@Email", email)
+            };
 
-                return cmd.ExecuteNonQuery() > 0;
+            using (var reader = DatabaseHelper.ExecuteReader("GetUtilizatorByEmail", parameters))
+            {
+                return reader.Read(); // dacă există o linie, emailul e deja folosit
             }
         }
+
+        public static bool Register(Utilizator utilizator)
+        {
+            if (EmailExista(utilizator.Email))
+                return false;
+
+            var parametri = new List<SqlParameter>
+            {
+                new SqlParameter("@Nume", utilizator.Nume),
+                new SqlParameter("@Prenume", utilizator.Prenume),
+                new SqlParameter("@Email", utilizator.Email),
+                new SqlParameter("@Parola", utilizator.Parola),
+                new SqlParameter("@Telefon", utilizator.Telefon ?? ""),
+                new SqlParameter("@Adresa", utilizator.Adresa ?? ""),
+                new SqlParameter("@Tip", utilizator.Tip)
+            };
+
+            try
+            {
+                DatabaseHelper.ExecuteNonQuery("RegisterUtilizator", parametri);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Eroare SQL: " + ex.Message);
+                throw; // temporar, să vezi în Output fereastra exactul motiv
+            }
+
+        }
+
+        public static Utilizator GetUtilizatorById(int id)
+        {
+            var parameters = new List<SqlParameter>
+    {
+        new SqlParameter("@Id", id)
+    };
+
+            using (var reader = DatabaseHelper.ExecuteReader("GetUtilizatorById", parameters))
+            {
+                if (reader.Read())
+                {
+                    return new Utilizator
+                    {
+                        Id = (int)reader["Id"],
+                        Nume = reader["Nume"].ToString(),
+                        Prenume = reader["Prenume"].ToString(),
+                        Email = reader["Email"].ToString(),
+                        Telefon = reader["Telefon"].ToString(),
+                        Adresa = reader["Adresa"].ToString(),
+                        Tip = reader["Tip"].ToString()
+                    };
+                }
+            }
+
+            return null;
+        }
+
+
 
     }
 }

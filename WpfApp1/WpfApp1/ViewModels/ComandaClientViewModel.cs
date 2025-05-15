@@ -1,11 +1,18 @@
 ﻿using EasyFoodManager.DAL;
 using EasyFoodManager.Models;
+using EasyFoodManager.ViewModels;
+
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using EasyFoodManager.Services;
+using System.Data;
+using Microsoft.Data.SqlClient;
+using System.Windows;
+
+
 
 namespace EasyFoodManager.ViewModels
 {
@@ -15,6 +22,8 @@ namespace EasyFoodManager.ViewModels
         public ObservableCollection<Comanda> ComenziClient { get; set; } = new();
 
         public Utilizator ClientCurent { get; set; }
+     
+
 
         private Comanda _comandaSelectata;
         public Comanda ComandaSelectata
@@ -31,6 +40,57 @@ namespace EasyFoodManager.ViewModels
         public ICommand AnuleazaComandaCommand { get; }
         public ICommand RefreshComenziCommand { get; }
 
+
+        public string Keyword { get; set; }
+        public string Alergen { get; set; }
+        public bool Contine { get; set; }
+
+        public ObservableCollection<PreparatMeniuDTO> Rezultate { get; set; } = new();
+        public ObservableCollection<Preparat> PreparateMeniu { get; set; } = new();
+
+
+        public PreparatMeniuDTO PreparatSelectatDinCautare { get; set; }
+
+        public ICommand CautaCommand => new RelayCommand(_ => Cauta());
+        public ICommand AdaugaLaComandaDinCautareCommand => new RelayCommand(_ => AdaugaLaComandaDinCautare());
+
+        private void Cauta()
+        {
+            Rezultate.Clear();
+            var rezultate = PreparatDAL.CautaPreparateMeniu(Keyword ?? "", Alergen, Contine);
+            foreach (var r in rezultate)
+                Rezultate.Add(r);
+        }
+
+        private void AdaugaLaComandaDinCautare()
+        {
+            if (PreparatSelectatDinCautare == null)
+                return;
+
+            var preparat = new Preparat
+            {
+                Id = PreparatSelectatDinCautare.Id,
+                Denumire = PreparatSelectatDinCautare.Denumire,
+                Pret = PreparatSelectatDinCautare.Pret
+                // Poți adăuga și CantitatePortie, etc.
+            };
+
+            var existent = MeniuPreparate.FirstOrDefault(x => x.Preparat.Id == preparat.Id);
+            if (existent != null)
+            {
+                existent.Cantitate += 1;
+            }
+            else
+            {
+                MeniuPreparate.Add(new PreparatSelectat
+                {
+                    Preparat = preparat,
+                    Cantitate = 1
+                });
+            }
+
+        }
+
         public ComandaClientViewModel(Utilizator client)
         {
             ClientCurent = client;
@@ -40,6 +100,8 @@ namespace EasyFoodManager.ViewModels
                 MeniuPreparate.Add(new PreparatSelectat { Preparat = p, Cantitate = 0 });
 
             LoadComenzi();
+            LoadPreparateMeniu();
+
 
             PlaseazaComandaCommand = new RelayCommand(_ => PlaseazaComanda());
             AnuleazaComandaCommand = new RelayCommand(_ => AnuleazaComanda(),
@@ -54,6 +116,14 @@ namespace EasyFoodManager.ViewModels
             foreach (var c in comenzi)
                 ComenziClient.Add(c);
         }
+        private void LoadPreparateMeniu()
+        {
+            PreparateMeniu.Clear();
+            var toate = PreparatDAL.GetAllPreparate(); // poți filtra dacă vrei doar active
+            foreach (var p in toate)
+                PreparateMeniu.Add(p);
+        }
+
 
         private void PlaseazaComanda()
         {
@@ -65,7 +135,7 @@ namespace EasyFoodManager.ViewModels
                     NrBucati = (int)p.Cantitate
                 }).ToList();
 
-            if (produseComandate.Count == 1)
+            if (produseComandate.Count == 0)
                 return;
 
             var total = produseComandate.Sum(p => p.NrBucati * MeniuPreparate
@@ -87,11 +157,34 @@ namespace EasyFoodManager.ViewModels
                 Produse = produseComandate
             };
 
+            // Salvare in baza de date
             ComandaDAL.AddComanda(comandaNoua);
-            LoadComenzi();
 
+            // 🔻 Reducere stoc
+            foreach (var produs in comandaNoua.Produse)
+            {
+                var preparat = MeniuPreparate.FirstOrDefault(p => p.Preparat.Id == produs.PreparatId);
+                if (preparat != null)
+                {
+                    double cantitateScazuta = preparat.Preparat.CantitateTotala -
+                                               (preparat.Preparat.CantitatePortie * produs.NrBucati);
+
+                    var parametriUpdate = new List<SqlParameter>
+                    {
+                        new SqlParameter("@Id", preparat.Preparat.Id),
+                        new SqlParameter("@NouaCantitate", cantitateScazuta)
+                    };
+
+                    DatabaseHelper.ExecuteNonQuery("UpdateCantitateTotalaPreparat", parametriUpdate);
+                }
+            }
+
+            // Reincarca comenzile si reseteaza cantitati
+            LoadComenzi();
             foreach (var item in MeniuPreparate)
                 item.Cantitate = 0;
+            MessageBox.Show("Comanda a fost plasată cu succes!", "Comandă plasată", MessageBoxButton.OK, MessageBoxImage.Information);
+
         }
 
         private void AnuleazaComanda()
@@ -100,6 +193,8 @@ namespace EasyFoodManager.ViewModels
 
             ComandaDAL.AnuleazaComanda(ComandaSelectata.Id);
             LoadComenzi();
+            MessageBox.Show("Comanda a fost anulată.", "Comandă anulată", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

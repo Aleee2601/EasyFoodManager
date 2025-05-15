@@ -1,7 +1,7 @@
 ﻿<Window x:Class="EasyFoodManager.Views.GuestMenuView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Meniu - Vizitator" Height="500" Width="800"
+        Title="Meniu - Vizitator" Height="600" Width="850"
         WindowStartupLocation="CenterScreen">
 
     <Grid Margin="10">
@@ -10,28 +10,78 @@
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
 
-        <GroupBox Header="Meniuri disponibile" Grid.Column="0" Margin="0,0,10,0">
-            <ListView ItemsSource="{Binding Meniuri}" SelectedItem="{Binding SelectedMeniu}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Denumire}" Width="150"/>
-                        <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Pret}" Width="80"/>
-                        <GridViewColumn Header="Categorie ID" DisplayMemberBinding="{Binding CategorieId}" Width="100"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </GroupBox>
+        <!-- 🔍 Căutare în meniu -->
+        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+            <GroupBox Header="Caută preparate sau meniuri">
+                <StackPanel>
+                    <TextBlock Text="Cuvânt cheie:" Margin="0,5"/>
+                    <TextBox Text="{Binding Keyword, UpdateSourceTrigger=PropertyChanged}" />
 
-        <GroupBox Header="Preparate în meniu" Grid.Column="1">
-            <ListView ItemsSource="{Binding PreparateleMeniului}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Denumire}" Width="200"/>
-                        <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Pret}" Width="80"/>
-                        <GridViewColumn Header="Porție (g/ml)" DisplayMemberBinding="{Binding CantitatePortie}" Width="100"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </GroupBox>
+                    <TextBlock Text="Alergen (opțional):" Margin="10,10,0,5"/>
+                    <TextBox Text="{Binding Alergen, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <CheckBox Content="Conține alergenul?" IsChecked="{Binding Contine}" Margin="0,10"/>
+                    <Button Content="Caută" Command="{Binding CautaCommand}" Padding="5" />
+                </StackPanel>
+            </GroupBox>
+
+            <!-- 📋 Lista rezultate căutare -->
+            <GroupBox Header="Rezultate căutare" Margin="0,10,0,0">
+                <StackPanel>
+                    <ListView ItemsSource="{Binding Rezultate}"
+                              SelectedItem="{Binding PreparatSelectatDinCautare}"
+                              SelectionMode="Single"
+                              Margin="0,10,0,0"
+                              Height="200">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Tip" DisplayMemberBinding="{Binding Tip}" Width="80"/>
+                                <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Denumire}" Width="180"/>
+                                <GridViewColumn Header="Categorie" DisplayMemberBinding="{Binding Categorie}" Width="100"/>
+                                <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Pret}" Width="80"/>
+                                <GridViewColumn Header="Cantitate" DisplayMemberBinding="{Binding Cantitate}" Width="100"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+
+                    <Button Content="Afișează detalii"
+                            Command="{Binding AfiseazaDetaliiPreparatCommand}"
+                            IsEnabled="{Binding PreparatSelectatDinCautare}"
+                            Padding="10,5"
+                            Margin="0,5,0,0"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+
+        <!-- 📦 Preparate și meniuri, afișate vertical -->
+        <StackPanel Grid.Column="1" Orientation="Vertical" Margin="0,0,0,0">
+
+            <!-- 🍽️ Preparate în meniu -->
+            <GroupBox Header="Preparate în meniu" Margin="0,0,0,10" Height="250">
+                <ListView ItemsSource="{Binding PreparateleMeniului}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Denumire}" Width="200"/>
+                            <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Pret}" Width="80"/>
+                            <GridViewColumn Header="Porție (g/ml)" DisplayMemberBinding="{Binding CantitatePortie}" Width="100"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </GroupBox>
+
+            <!-- 📋 Meniuri disponibile -->
+            <GroupBox Header="Meniuri disponibile">
+                <ListView ItemsSource="{Binding Meniuri}" SelectedItem="{Binding SelectedMeniu}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Denumire" DisplayMemberBinding="{Binding Denumire}" Width="150"/>
+                            <GridViewColumn Header="Preț" DisplayMemberBinding="{Binding Pret}" Width="80"/>
+                            <GridViewColumn Header="Categorie ID" DisplayMemberBinding="{Binding CategorieId}" Width="100"/>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </GroupBox>
+
+        </StackPanel>
     </Grid>
 </Window>

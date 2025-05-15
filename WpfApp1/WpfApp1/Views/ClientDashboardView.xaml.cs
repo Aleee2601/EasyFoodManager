@@ -1,6 +1,6 @@
-﻿using EasyFoodManager.ViewModels;
+﻿using System.Windows;
 using EasyFoodManager.Services;
-using System.Windows;
+using EasyFoodManager.ViewModels;
 
 namespace EasyFoodManager.Views
 {
@@ -18,6 +18,11 @@ namespace EasyFoodManager.Views
             }
 
             DataContext = new ComandaClientViewModel(UserContext.CurrentUser);
+        }
+
+        private void PreparatList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

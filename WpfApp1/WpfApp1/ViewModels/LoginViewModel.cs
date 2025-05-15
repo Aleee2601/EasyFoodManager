@@ -55,7 +55,7 @@ namespace EasyFoodManager.ViewModels
 
         private void Login()
         {
-            MesajEroare = string.Empty;
+            MesajEroare = "";
 
             if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Parola))
             {
@@ -63,7 +63,11 @@ namespace EasyFoodManager.ViewModels
                 return;
             }
 
-            Utilizator user = UtilizatorDAL.Login(Email, Parola);
+            // 👉 Parola este transformată în hash
+            string parolaHash = HashHelper.ComputeSha256Hash(Parola);
+
+            // 👉 Căutăm utilizatorul cu acel email și hash
+            Utilizator user = UtilizatorDAL.Login(Email, parolaHash);
 
             if (user == null)
             {
@@ -71,9 +75,9 @@ namespace EasyFoodManager.ViewModels
                 return;
             }
 
-            // Navigare în funcție de rol
             OnLoginSuccess?.Invoke(user);
         }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name) =>

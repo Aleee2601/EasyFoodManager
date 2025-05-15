@@ -15,12 +15,24 @@ namespace EasyFoodManager.Views
             DataContext = _viewModel;
 
             // setează parola la fiecare modificare
-            _viewModel.OnLoginSuccess = user =>
-            {
-                Services.UserContext.CurrentUser = user;
-                Services.NavigationService.NavigateTo(user.Tip);
-            };
+            _viewModel.OnLoginSuccess = NavigheazaInFunctieDeRol;
+
         }
+        private void NavigheazaInFunctieDeRol(Models.Utilizator user)
+        {
+            Services.UserContext.CurrentUser = user;
+
+            Window urmatoareaFereastra = null;
+
+            if (user.Tip == "Client")
+                urmatoareaFereastra = new ClientDashboardView();
+            else if (user.Tip == "Angajat")
+                urmatoareaFereastra = new AngajatDashboardView();
+
+            urmatoareaFereastra?.Show();
+            this.Close();
+        }
+
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
