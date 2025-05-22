@@ -15,6 +15,8 @@ namespace EasyFoodManager.Models
         public decimal Discount { get; set; }
         public string OraEstimataLivrare { get; set; }
 
+        //public List<ComandaProdus> Produse { get; set; } = new();
+
         public List<ComandaPreparat> Produse { get; set; } = new List<ComandaPreparat>();
     }
 

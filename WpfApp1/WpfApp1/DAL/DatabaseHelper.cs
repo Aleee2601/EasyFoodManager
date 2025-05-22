@@ -64,7 +64,7 @@ namespace EasyFoodManager.DAL
 
         public static SqlDataReader ExecuteReader(string storedProcedureName, List<SqlParameter> parameters = null)
         {
-            var connection = GetConnection(); // nu folosim using aici pentru că reader-ul are ownership pe conexiune
+            var connection = GetConnection(); 
             var command = new SqlCommand(storedProcedureName, connection)
             {
                 CommandType = CommandType.StoredProcedure
@@ -75,5 +75,24 @@ namespace EasyFoodManager.DAL
 
             return command.ExecuteReader(CommandBehavior.CloseConnection);
         }
+        public static DataTable ExecuteDataTable(string storedProcedureName, List<SqlParameter> parameters = null)
+        {
+            using (var connection = GetConnection())
+            using (var command = new SqlCommand(storedProcedureName, connection))
+            {
+                command.CommandType = CommandType.StoredProcedure;
+
+                if (parameters != null)
+                    command.Parameters.AddRange(parameters.ToArray());
+
+                using (var adapter = new SqlDataAdapter(command))
+                {
+                    var table = new DataTable();
+                    adapter.Fill(table);
+                    return table;
+                }
+            }
+        }
+
     }
 }

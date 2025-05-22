@@ -6,6 +6,40 @@ using System.ComponentModel;
 using System.Windows.Input;
 using EasyFoodManager.Services;
 
+
+/*
+ * TODO:
+ *  - Adaugă validare pentru email (ex: regex)
+ *  - Adaugă validare pentru parolă (ex: minim 8 caractere, 1 majusculă, 1 cifră)
+ *  - Adaugă un mesaj de succes după autentificare
+ *  - Adaugă un mesaj de eroare în cazul în care utilizatorul nu există
+ *  - Adaugă un mesaj de eroare în cazul în care parola este greșită
+ *  - Adaugă un mesaj de eroare în cazul în care email-ul nu este valid
+ *  - Adaugă un mesaj de eroare în cazul în care parola nu este validă
+ *  
+ *  
+ *  
+ *  
+ *  
+ *  - lista de preparate si de meniuri - pt comanda
+ *  - admin - modificare/stergere/adaugare meniuri si preparate, categorii, alergeni
+ *  - adaugat imagini
+ *  
+ *  
+ *  - adaugat un meniu de navigare
+ *  - adaugat un meniu de navigare pentru admin
+ *  - adaugat un meniu de navigare pentru utilizator
+ *  - adaugat un meniu de navigare pentru guest
+ *  - Modificat UI-ul pentru a fi mai prietenos
+ *  
+ *  
+ *  
+ *  - MODIFICAT COMENTARIILE !!!!
+ */
+
+
+
+
 namespace EasyFoodManager.ViewModels
 {
     public class LoginViewModel : INotifyPropertyChanged
